@@ -1,21 +1,28 @@
 <?php
-    //start session
-    session_start();
-    if(isset($_POST['name'])){
-        if(isset($_SESSION['bookmarks'])){
-            $_SESSION['bookmarks'][$_POST['name']] = $_POST['url'];
-        } else {
-            $_SESSION['bookmarks']= array($_POST['name'] => $_POST['url']);
+// Start session
+session_start();
+
+// Handle form submission
+if(isset($_POST['submit'])) {
+    // Validate and sanitize inputs
+    $name = htmlspecialchars($_POST['name']);
+    $url = htmlspecialchars($_POST['url']);
+
+    // Initialize or update bookmarks session variable
+    if(isset($_SESSION['bookmarks'])) {
+        $_SESSION['bookmarks'][$name] = $url;
+    } else {
+        $_SESSION['bookmarks'] = array($name => $url);
     }
 }
-    ?>
+?>
 
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>bookmarker</title>
+    <title>Bookmarker</title>
     <link rel="stylesheet" href="https://bootswatch.com/5/cyborg/bootstrap.min.css">
     <style>
     /* Basic styling for the navbar */
@@ -57,12 +64,13 @@
         padding: 14px 20px;
         text-decoration: none;
     }
-</style>
+    </style>
 </head>
 <body>
+
 <nav>
     <ul>
-        <li><a href="#">bookmarker</a></li>
+        <li><a href="#">Bookmarker</a></li>
         <li><a href="index.php">Home</a></li>
 
         <!-- Right-aligned content -->
@@ -71,30 +79,33 @@
         </div>
     </ul>
 </nav>
-<div class=" container">
+
+<div class="container">
     <div class="row">
         <div class="col-md-7">
-            <form Method="post" action="<?php $_SERVER['PHP_SELF']; ?>">
+            <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
                 <div class="form-group">
-                    <label for="">website NAME</label>
-                <input type="text" class="form-control" name="url">
+                    <label for="name">Website Name</label>
+                    <input type="text" class="form-control" name="name" id="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="">website URL</label>
-                <input type="text" class="form-control" name="url">
+                    <label for="url">Website URL</label>
+                    <input type="text" class="form-control" name="url" id="url" required>
                 </div>
-                <input type="submit" value="submit" class="btn btn-default">
+                <input type="submit" value="Submit" name="submit" class="btn btn-default">
             </form>
         </div>
         <div class="col-md-5">
-        <!-- loop -->
             <?php if (isset($_SESSION['bookmarks'])) : ?>
                 <ul class="list-group">
-                    <?php foreach($_SESSION['bookmarks'] as $name => $url) :  ?>
-                        <li class="list-group-item"><a href="<?php echo $url; ?>"</li>
+                    <?php foreach($_SESSION['bookmarks'] as $name => $url) : ?>
+                        <li class="list-group-item"><a href="<?php echo $url; ?>" target="_blank"><?php echo $name; ?></a></li>
                     <?php endforeach; ?>
                 </ul>
+            <?php endif; ?>
         </div>
     </div>
+</div>
+
 </body>
 </html>
